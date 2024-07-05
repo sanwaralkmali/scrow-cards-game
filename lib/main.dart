@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrow/gameScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,8 +10,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Placeholder(),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Scrow Game'),
+        ),
+        body: GameScreen(),
+      ),
     );
   }
 }
