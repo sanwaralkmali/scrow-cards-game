@@ -8,6 +8,8 @@ class GameState extends ChangeNotifier {
   final Deck deck = Deck();
   List<CardG> discardPile = [];
   List<Player> players = [];
+  int currentPlayerIndex = 0;
+  int turn = 1;
 
   GameState() {
     // Start the timer
@@ -42,8 +44,15 @@ class GameState extends ChangeNotifier {
   void drawFromDeck() {
     if (deck.cards.isNotEmpty) {
       final card = deck.drawCard();
-      final currentPlayer = players[0];
+      final currentPlayer = players[currentPlayerIndex];
       currentPlayer.addCardToHand(card);
+      if (turn == 4) {
+        turn = 1;
+        currentPlayerIndex = 0;
+      } else {
+        turn++;
+        currentPlayerIndex++;
+      }
       notifyListeners();
     }
   }
