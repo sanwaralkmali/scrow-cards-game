@@ -1,40 +1,39 @@
+import 'dart:math';
 import 'package:scrow/data/cardsData.dart';
 
 class Deck {
-  List<Card> cards = [];
+  final List<CardG> cards = [];
 
   Deck() {
     // Initialize with 52 regular cards (1-10, 4 of each)
     for (int rank = 1; rank <= 10; rank++) {
       for (int i = 0; i < 4; i++) {
-        cards.add(Card(
+        cards.add(CardG(
             rank: rank,
             isSpecial: false,
             imagePath:
-                '$rank.png')); // Assuming you have images named card_1.png, card_2.png, etc.
+                'assets/cards/$rank.png')); // Update image path to assets folder
       }
     }
+
+    // Initialize with 6 special cards (11-16, 2 of each)
     for (int rank = 11; rank <= 16; rank++) {
       for (int i = 0; i < 2; i++) {
-        cards.add(Card(
-            rank: rank,
-            isSpecial: true,
-            imagePath:
-                '$rank.png')); // Assuming you have images named card_1.png, card_2.png, etc.
+        cards.add(CardG(
+            rank: rank, isSpecial: true, imagePath: 'assets/cards/$rank.png'));
       }
     }
   }
 
   void shuffle() {
-    cards.shuffle(); // Use the built-in shuffle method from 'dart:math'
+    cards.shuffle(Random());
   }
 
-  Card drawCard() {
+  CardG drawCard() {
     if (cards.isNotEmpty) {
-      return cards.removeLast(); // Remove the last card (top of the stack)
+      return cards.removeLast();
     } else {
-      throw Exception(
-          'Deck is empty'); // Handle the case where the deck runs out
+      throw Exception('Deck is empty');
     }
   }
 }

@@ -1,7 +1,9 @@
-class Card {
-  final int rank; // 1 to 10 or a special card identifier
+class CardG {
+  final int rank;
   final bool isSpecial;
-  final String imagePath; // Asset path to the card image
+  final String imagePath;
+  bool isFaceUp = true;
+  final String backPath = 'assets/cards/back.png';
 
-  Card({required this.rank, required this.isSpecial, required this.imagePath});
+  CardG({required this.rank, required this.isSpecial, required this.imagePath});
 }

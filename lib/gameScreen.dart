@@ -1,90 +1,76 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:scrow/data/deck.dart';
+import 'package:provider/provider.dart';
+import 'package:scrow/buildPlayerArea.dart';
+import 'package:scrow/gameState.dart';
 
-class GameScreen extends StatelessWidget {
-  GameScreen({super.key});
-  Deck deck = Deck();
+class GameScreen extends StatefulWidget {
+  @override
+  _GameScreenState createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Schedule the initializeGame() call for after the first frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<GameState>(context, listen: false).initializeGame();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    deck.shuffle();
+    final gameState = Provider.of<GameState>(context);
     return Stack(
       children: [
-        // Center boxes
+        // Center boxes (simplified)
         Align(
           alignment: Alignment.center,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
+              // Discard Pile (update to show the top discarded card later)
+              Image.asset(
+                gameState.discardPile.isNotEmpty
+                    ? gameState.discardPile.last.imagePath
+                    : 'assets/cards/back.png',
                 width: 75,
                 height: 100,
-                color: Colors.red, // Discard pile
-                child: const Center(child: Text('Discard')),
               ),
               const SizedBox(height: 20),
-              Container(
-                width: 75,
-                height: 100,
-                color: Colors.green, // Deck
-                child: const Center(child: Text('Deck')),
+              // Deck (update to handle deck interactions later)
+              GestureDetector(
+                onTap: () {
+                  // Add logic for drawing from the deck
+                  gameState.drawFromDeck();
+                },
+                child: Image.asset(
+                  'assets/cards/back.png',
+                  width: 75,
+                  height: 100,
+                ),
               ),
             ],
           ),
         ),
         // Player areas
-        Align(alignment: Alignment.topCenter, child: _buildPlayerArea(1)),
-        Align(alignment: Alignment.bottomCenter, child: _buildPlayerArea(3)),
-        Align(alignment: Alignment.centerLeft, child: _buildPlayerArea(2)),
-        Align(alignment: Alignment.centerRight, child: _buildPlayerArea(4)),
-      ],
-    );
-  }
-
-  Widget _buildPlayerArea(int playerNumber) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text('Player $playerNumber:'),
-        if (playerNumber == 1 || playerNumber == 3)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (int card = 0; card < 4; card++)
-                Container(
-                  margin: const EdgeInsets.all(5),
-                  padding: const EdgeInsets.all(0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Image.asset(
-                    'assets/cards/${deck.drawCard().imagePath}',
-                    width: 50.00,
-                  ),
-                ),
-            ],
-          ),
-        if (playerNumber == 2 || playerNumber == 4)
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (int card = 0; card < 4; card++)
-                Container(
-                  margin: const EdgeInsets.all(5),
-                  padding: const EdgeInsets.all(0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Image.asset(
-                    'assets/cards/${deck.drawCard().imagePath}',
-                    width: 50.00,
-                  ),
-                ),
-            ],
-          ),
+        const Align(
+          alignment: Alignment.topCenter,
+          child: BuildPlayerArea(playerNumber: 1, playerIndex: 0),
+        ),
+        const Align(
+          alignment: Alignment.bottomCenter,
+          child: BuildPlayerArea(playerNumber: 3, playerIndex: 2),
+        ),
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: BuildPlayerArea(playerNumber: 4, playerIndex: 3),
+        ),
+        const Align(
+          alignment: Alignment.centerRight,
+          child: BuildPlayerArea(playerNumber: 2, playerIndex: 1),
+        ),
       ],
     );
   }
